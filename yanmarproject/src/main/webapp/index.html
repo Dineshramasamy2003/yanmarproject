@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Testing</h1>
+        <!-- Removed action and method -->
+        <form id="loginForm" class="login-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="user" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="pass" required>
+            </div>
+            <button type="submit">Test Login</button>
+        </form>
+        <div id="responseContainer" class="response-container">
+            <h3>Backend Response:</h3>
+            <pre id="responseOutput">Submit the form to see response</pre>
+            <div id="statusIndicator"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const responseOutput = document.getElementById('responseOutput');
+            const statusIndicator = document.getElementById('statusIndicator');
+
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(loginForm);
+                const data = new URLSearchParams(formData);
+
+                // Clear previous output
+                responseOutput.textContent = "Sending request...";
+                statusIndicator.style.backgroundColor = "yellow";
+
+                try {
+					const response = await fetch('http://localhost:8080/yanmarproject/login', {
+
+                    //const response = await fetch('http://localhost:8080/YourProjectName/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: data
+                    });
+
+                    const result = await response.json();
+                    responseOutput.style.backgroundColor="red";
+                    responseOutput.textContent = JSON.stringify(result.message);
+
+                    //if (result.status === "success") {
+                        //statusIndicator.style.backgroundColor = "red";
+                    //} else {
+                        //statusIndicator.style.backgroundColor = "green";
+                    //}
+
+                } catch (err) {
+                    responseOutput.textContent = `Error: ${err.message}`;
+                    statusIndicator.style.backgroundColor = "#f44336";
+                    console.error(err);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
